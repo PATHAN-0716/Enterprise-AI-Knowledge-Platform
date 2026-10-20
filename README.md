@@ -1,22 +1,24 @@
 ﻿# Enterprise AI Knowledge Platform
 
-A document-based AI question-answering platform that allows users to upload documents, retrieve relevant information using hybrid search, and receive AI-generated answers with source citations.
+An AI-powered knowledge platform that enables users to upload documents, search enterprise knowledge, and receive context-aware answers using Retrieval-Augmented Generation (RAG).
 
-The application combines **Retrieval-Augmented Generation (RAG)**, semantic embeddings, keyword search, reranking, and Google's Gemini model in a containerized full-stack application.
+## Overview
+
+The Enterprise AI Knowledge Platform transforms unstructured documents into searchable knowledge. Users can upload documents, retrieve relevant information using hybrid search, and ask natural-language questions through an AI-powered chat interface.
+
+The application combines semantic search, keyword retrieval, reranking, and a large language model to provide relevant answers grounded in document content.
 
 ## Key Features
 
-- **Multi-format document upload:** Supports PDF, DOCX, and TXT files.
-- **Document processing:** Extracts text, splits documents into chunks, and prepares them for retrieval.
-- **Semantic search:** Uses Sentence Transformers embeddings to retrieve contextually relevant content.
-- **Keyword search:** Uses BM25 to find relevant matches based on document terms.
-- **Hybrid retrieval:** Combines semantic and keyword search to improve candidate retrieval.
-- **Cross-encoder reranking:** Reorders retrieved candidates to prioritize relevance.
-- **AI-powered answers:** Uses Google Gemini to generate answers grounded in retrieved document content.
-- **Source citations:** Supports source attribution for answers when valid source references are available.
-- **Persistent vector storage:** Uses ChromaDB to store document embeddings for retrieval.
-- **Interactive web interface:** Provides a React-based interface for uploading documents and asking questions.
-- **Containerized deployment:** Uses Docker Compose to run the frontend and backend together.
+- **Document Upload:** Upload supported PDF, DOCX, and TXT documents.
+- **Document Processing:** Extract text, split content into chunks, and prepare documents for retrieval.
+- **Semantic Search:** Retrieve relevant information using embedding-based similarity.
+- **Hybrid Retrieval:** Combine semantic search with BM25 keyword-based retrieval.
+- **Reranking:** Improve the relevance of retrieved document chunks using a cross-encoder reranker.
+- **AI-Powered Chat:** Generate context-aware answers using Google's Gemini API.
+- **Source-Grounded Responses:** Use retrieved document context to support answers and citations where available.
+- **REST API:** Expose backend functionality through FastAPI.
+- **Containerized Deployment:** Run the frontend and backend using Docker Compose.
 
 ## Architecture
 
@@ -25,148 +27,166 @@ The application combines **Retrieval-Augmented Generation (RAG)**, semantic embe
                    |
                    v
           React + Vite Frontend
-              localhost:3000
                    |
                    v
-             FastAPI Backend
-              localhost:8000
+              FastAPI Backend
                    |
           +--------+---------+
           |                  |
           v                  v
-    Document Upload       User Question
+    Document Upload      Chat / Query
           |                  |
           v                  v
-   PDF / DOCX / TXT     Hybrid Retrieval
+    Text Extraction     Hybrid Retrieval
           |             /            \
-          v            v              v
-     Text Extraction  Vector Search  BM25 Search
-          |            \              /
-          v             \            /
-     Text Chunking       Candidate Fusion
-          |                      |
-          v                      v
-  Sentence Transformers    Cross-Encoder Reranking
-          |                      |
-          v                      v
-       ChromaDB              Relevant Chunks
-                                   |
-                                   v
-                             Gemini Model
-                                   |
-                                   v
-                         Answer + Source References
+          v        Semantic Search   BM25
+    Text Chunking           \          /
+          |                  v
+          v               Reranking
+    Embeddings                 |
+          |                    v
+          v               Relevant Chunks
+     ChromaDB                   |
+                               v
+                         Gemini API
+                               |
+                               v
+                         AI Response
 ```
 
 ## Technology Stack
 
-| Component | Technology |
-|---|---|
-| Frontend | React, Vite, JavaScript |
-| Backend | Python, FastAPI, Uvicorn |
-| Embeddings | Sentence Transformers |
-| Keyword retrieval | BM25 (`rank-bm25`) |
-| Vector database | ChromaDB |
-| Reranking | Cross-encoder model |
-| Generative AI | Google Gemini API |
-| Document processing | PyPDF, python-docx |
-| Containerization | Docker, Docker Compose |
-| API documentation | FastAPI Swagger UI |
+### Frontend
+- React
+- Vite
+- JavaScript
+- CSS
+
+### Backend
+- Python
+- FastAPI
+- Uvicorn
+- Sentence Transformers
+- ChromaDB
+- BM25 (`rank-bm25`)
+- LangChain text splitters
+
+### AI and Retrieval
+- Google Gemini API
+- Sentence embeddings
+- Vector similarity search
+- BM25 keyword retrieval
+- Cross-encoder reranking
+- Retrieval-Augmented Generation (RAG)
+
+### Document Processing
+- PyPDF
+- python-docx
+- Python multipart file handling
+
+### DevOps and Testing
+- Docker
+- Docker Compose
+- Nginx
+- Pytest
+- Git and GitHub
+- GitHub Actions
 
 ## Project Structure
 
 ```text
 Enterprise-AI-Knowledge-Platform/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── .vscode/
 ├── backend/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── upload.py
+│   │   │   ├── chat.py
 │   │   │   ├── documents.py
-│   │   │   └── chat.py
+│   │   │   └── upload.py
+│   │   ├── core/
+│   │   ├── models/
+│   │   ├── schemas/
 │   │   ├── services/
-│   │   │   ├── storage_service.py
+│   │   │   ├── chunks.json
+│   │   │   ├── document_processor.py
 │   │   │   ├── rag_service.py
-│   │   │   └── chunks.json
-│   │   ├── .env                  # Local secrets; not committed
-│   │   └── main.py
-│   ├── uploads/                  # Uploaded documents; local data
-│   ├── chroma_db/                # Vector database; local data
+│   │   │   └── storage_service.py
+│   │   ├── utils/
+│   │   ├── main.py
+│   │   └── .env
+│   ├── Dockerfile
 │   ├── requirements.txt
-│   └── Dockerfile
+│   └── .env.example
 ├── frontend/
+│   ├── public/
 │   ├── src/
-│   │   └── App.jsx
+│   │   ├── assets/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── Dockerfile
 │   ├── nginx.conf
 │   ├── package.json
-│   └── Dockerfile
-├── docker-compose.yml
+│   └── vite.config.js
+├── sample_documents/
+├── scripts/
+├── tests/
+├── .dockerignore
 ├── .gitignore
+├── docker-compose.yml
 └── README.md
 ```
 
-*The tree highlights the main components. Retain any additional files already present in your actual project; filenames and directories can vary with implementation.*
-
-## How It Works
-
-### 1. Document ingestion
-
-Users upload a PDF, DOCX, or TXT document through the frontend. The FastAPI backend validates the file type and size, saves the document, and passes it to the document-processing pipeline.
-
-### 2. Text extraction and chunking
-
-The application extracts the document's text and divides it into smaller chunks. Chunking allows retrieval to focus on relevant passages instead of sending an entire document to the language model.
-
-### 3. Embedding and indexing
-
-Sentence Transformers generates vector embeddings for document chunks. ChromaDB stores the vectors for semantic retrieval, while BM25 provides keyword-based retrieval.
-
-### 4. Hybrid retrieval and reranking
-
-When a user asks a question, the application searches for relevant chunks using semantic and keyword retrieval. The candidates are combined and reranked with a cross-encoder to prioritize relevant context.
-
-### 5. Answer generation
-
-The retrieved context is supplied to the Gemini model to generate a response. The application supports source attribution so users can trace answers to relevant document content.
-
 ## Prerequisites
 
-- Docker Desktop installed and running
-- Git installed
+- Docker Desktop with Docker Compose
+- Git
 - A Google Gemini API key
-- VS Code (recommended)
 
-Docker Compose is used to run the application without manually installing backend and frontend dependencies on the host machine.
+For local development without Docker:
+- Python 3.12 or a compatible Python version
+- Node.js and npm
 
 ## Configuration
 
-The backend uses environment variables for configuration. Create a local environment file at:
-
-`backend/app/.env`
-
-Add your Gemini API key:
+Create or update `backend/app/.env` with your Gemini API key.
 
 ```env
-GEMINI_API_KEY=your_gemini_api_key_here
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-Use the exact environment variable names expected by your backend code. Never commit the real `.env` file or expose API keys in source code, screenshots, logs, or GitHub.
+Use the existing `.env.example` as a reference for the required configuration variables.
+
+**Security:** Never commit your actual `.env` file, API keys, or other secrets to GitHub.
 
 ## Run with Docker Compose
 
-Clone the repository and enter its directory:
+Clone the repository:
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/PATHAN-0716/Enterprise-AI-Knowledge-Platform.git
 cd Enterprise-AI-Knowledge-Platform
 ```
 
-Create `backend/app/.env` and configure your API key, then build and start the services:
+Configure the backend environment file at:
+
+```text
+backend/app/.env
+```
+
+Add the required environment variables before starting the application.
+
+Build and start the application:
 
 ```bash
 docker compose up --build -d
 ```
 
-Check the running containers:
+Check running containers:
 
 ```bash
 docker compose ps
@@ -190,76 +210,87 @@ Stop the application:
 docker compose down
 ```
 
-The application uses local Docker volumes/bind mounts for uploaded files and vector database data. Keep those directories safe when cleaning up or resetting the project.
-
 ## Access the Application
 
-| Resource | URL |
+| Component | URL |
 |---|---|
-| Web application | http://localhost:3000 |
-| Backend health check | http://localhost:8000/health |
-| FastAPI Swagger UI | http://localhost:8000/docs |
-| OpenAPI schema | http://localhost:8000/openapi.json |
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000 |
+| Health Check | http://localhost:8000/health |
+| API Documentation | http://localhost:8000/docs |
 
-## Supported Documents and Limits
+The API documentation is available through FastAPI's Swagger UI when the backend is running.
 
-The current storage service accepts `.pdf`, `.docx`, and `.txt` files and enforces a maximum upload size of **10 MB per file**.
+## Local Development
 
-Retrieval quality depends on document text extraction, chunking, embedding quality, candidate retrieval, and reranking. Answers may not always contain a valid citation, so verify important information against the original document.
+### Backend
 
-## Security and Data Handling
+Create and activate a virtual environment from the project root:
 
-- Keep API keys and local `.env` files out of version control.
-- Do not commit private documents, uploaded files, ChromaDB data, or local chunk caches.
-- Review `.gitignore` before pushing the repository.
-- Treat the current application as a development/portfolio project. Add appropriate authentication, authorization, rate limiting, and production security controls before exposing it publicly.
-
-## Troubleshooting
-
-**Backend is unavailable**
-
-```bash
-docker compose ps
-docker compose logs --tail 100 backend
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-**Frontend is unavailable**
+Install dependencies:
 
-```bash
-docker compose logs --tail 100 frontend
+```powershell
+pip install -r backend/requirements.txt
 ```
 
-**Upload fails**
+Configure the environment file, then start the backend:
 
-- Verify the file is PDF, DOCX, or TXT.
-- Check that the file is within the 10 MB limit.
-- Inspect backend logs for the actual error.
-- Confirm the required Python dependencies are listed in `backend/requirements.txt`.
-
-**Gemini requests fail**
-
-- Verify `backend/app/.env` exists.
-- Confirm the API key is valid and the configured model is available.
-- Inspect backend logs for the provider's error response.
-
-**Rebuild after dependency changes**
-
-```bash
-docker compose up --build -d
+```powershell
+uvicorn backend.app.main:app --reload
 ```
+
+### Frontend
+
+Open another terminal:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+Use the local development URL printed by Vite. Ensure the frontend API URL is configured correctly for the backend.
+
+## Testing
+
+Run the backend tests from the project root:
+
+```powershell
+python -m pytest tests -v
+```
+
+The test suite includes document processing, storage, and upload-related tests.
+
+## Data and Persistence
+
+The Docker Compose configuration mounts local directories and files for persistent application data, including:
+
+- Uploaded documents
+- ChromaDB storage
+- Document chunk data
+
+These locations help retain relevant data across container restarts. Keep local data out of version control when it contains private documents, generated indexes, or other sensitive information.
 
 ## Future Improvements
 
-- User authentication and document-level access control
-- Improved citation display and source passage previews
-- Automated evaluation of retrieval relevance and answer groundedness
-- Background processing for larger document collections
-- Production deployment with monitoring and usage controls
+- Authentication and role-based access control
+- Multi-user document collections
+- Improved source attribution and citation validation
+- Background document ingestion for large files
+- Retrieval and response evaluation
+- Observability, performance monitoring, and deployment automation
 
 ## Author
 
 **Pathan Adilsha Khan**
 
-Enterprise AI Knowledge Platform — a full-stack RAG application demonstrating document ingestion, hybrid retrieval, reranking, and AI-powered question answering.
-#   E n t e r p r i s e - A I - K n o w l e d g e - P l a t f o r m  
- 
+GitHub: [PATHAN-0716](https://github.com/PATHAN-0716)
+
+## License
+
+A license has not yet been specified. Add a `LICENSE` file before distributing the project under an open-source license.
