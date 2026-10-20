@@ -1,0 +1,145 @@
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f4f6fa;
+  color: #1c2434;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 64px;
+}
+
+header {
+  margin-bottom: 28px;
+}
+
+h1 {
+  margin: 6px 0;
+  font-size: 2.5rem;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.eyebrow,
+.muted {
+  color: #667085;
+  font-size: 0.9rem;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e1e5ec;
+  border-radius: 14px;
+  padding: 22px;
+  margin: 18px 0;
+}
+
+.upload-form,
+.chat-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.upload-form input,
+.chat-form input {
+  flex: 1;
+  min-width: 180px;
+}
+
+input {
+  padding: 12px;
+  border: 1px solid #cfd5df;
+  border-radius: 8px;
+}
+
+button {
+  padding: 11px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #253c78;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.document {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid #edf0f5;
+}
+
+.document p {
+  margin-bottom: 0;
+}
+
+.danger {
+  background: #a62b35;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.message {
+  padding: 16px;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+
+.message p {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+.message.user {
+  background: #edf2ff;
+}
+
+.message.assistant {
+  background: #f4f5f7;
+}
+
+.sources {
+  border-top: 1px solid #dce1e9;
+  padding-top: 12px;
+}
+
+details {
+  margin-top: 8px;
+}
+
+summary {
+  cursor: pointer;
+}
+
+.error {
+  padding: 12px;
+  color: #a62b35;
+  background: #fff0f0;
+  border-radius: 8px;
+}
